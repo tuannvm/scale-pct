@@ -10,10 +10,10 @@ spec:
   description: |+2
     Scale Kubernetes deployment base on percentage
 
-		# Scale up a deployment named 'foo' by 10%
-		$ kubectl pct scale --pct=10 deployment/foo
-		# Scale down a deployment named 'foo' by 10%
-		$ kubectl pct scale --pct=-10 deployment/foo
+    # Scale up a deployment named 'foo' by 10%
+    $ kubectl pct scale --pct=10 deployment/foo
+    # Scale down a deployment named 'foo' by 10%
+    $ kubectl pct scale --pct=-10 deployment/foo
 
     For detail, run:
 

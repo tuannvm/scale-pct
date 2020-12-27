@@ -157,10 +157,8 @@ func (o *ScalePctOptions) Run() error {
 	r.Visit(func(info *resource.Info, err error) error {
 		mapping := info.ResourceMapping()
 		resources, _ := o.clientSet.AppsV1().Deployments(info.Namespace).Get(context.TODO(), info.Name, v1.GetOptions{})
-		fmt.Println(info.Name)
 		scaleReplicas := int(resources.Status.Replicas) + (int(resources.Status.Replicas) * o.Percentage / 100)
 		if err := o.scaler.Scale(info.Namespace, info.Name, uint(scaleReplicas), &scale.ScalePrecondition{Size: -1}, &scale.RetryParams{}, &scale.RetryParams{}, mapping.Resource, false); err != nil {
-			fmt.Println(err)
 			return err
 		}
 		return o.PrintObj(info.Object, o.Out)

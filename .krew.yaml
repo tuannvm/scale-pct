@@ -25,7 +25,7 @@ spec:
         matchLabels:
           os: darwin
           arch: amd64
-      {{addURIAndSha "https://github.com/tuannvm/scale-pct/releases/download/{{ .TagName }}/kubectl-pct-scale_{{ .TagName }}_darwin_x86_64.tar.gz" .TagName | indent 6}}
+      {{addURIAndSha "https://github.com/tuannvm/scale-pct/releases/download/{{ .TagName }}/scale-pct_{{ .TagName }}_darwin_x86_64.tar.gz" .TagName | indent 6}}
       files:
         - from: kubectl-pct-scale
           to: .
@@ -36,7 +36,7 @@ spec:
         matchLabels:
           os: linux
           arch: amd64
-      {{addURIAndSha "https://github.com/tuannvm/scale-pct/releases/download/{{ .TagName }}/kubectl-pct-scale_{{ .TagName }}_linux_x86_64.tar.gz" .TagName | indent 6}}
+      {{addURIAndSha "https://github.com/tuannvm/scale-pct/releases/download/{{ .TagName }}/scale-pct_{{ .TagName }}_linux_x86_64.tar.gz" .TagName | indent 6}}
       files:
         - from: kubectl-pct-scale
           to: .

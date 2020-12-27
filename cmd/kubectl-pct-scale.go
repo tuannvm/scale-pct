@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	flags := pflag.NewFlagSet("scale", pflag.ExitOnError)
+	flags := pflag.NewFlagSet("kubectl-pct-scale", pflag.ExitOnError)
 	pflag.CommandLine = flags
 
 	kubeConfigFlags := genericclioptions.NewConfigFlags(true).WithDeprecatedPasswordFlag()

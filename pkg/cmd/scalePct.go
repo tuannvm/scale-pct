@@ -25,11 +25,11 @@ import (
 )
 
 var (
-	namespaceExample = `
-		# Scale up a Percentageet named 'foo' by 10%.
-		%[1]s scale-pct --pct=10 rs/foo
-		# Scale down a Percentageet named 'foo' by 10%.
-		%[1]s scale-pct --pct=-10 rs/foo
+	scaleExample = `
+		# Scale up a deployment named 'foo' by 10%
+		kubectl pct scale --pct=10 deployment/foo
+		# Scale down a deployment named 'foo' by 10%
+		kubectl pct scale --pct=-10 deployment/foo
 	`
 
 	errNoContext = fmt.Errorf("no context is currently set, use %q to select a new one", "kubectl config use-context <context>")
@@ -74,9 +74,9 @@ func NewCmdScalePct(f cmdutil.Factory, streams genericclioptions.IOStreams) *cob
 	validArgs := []string{"deployment"}
 
 	cmd := &cobra.Command{
-		Use:     "ns [new-namespace] [flags]",
-		Short:   "View or set the current namespace",
-		Example: fmt.Sprintf(namespaceExample, "kubectl"),
+		Use:                   "kubectl pct scale --pct=<PERCENTAGE> <TYPE>/<NAME>",
+		DisableFlagsInUseLine: true,
+		Example:               scaleExample,
 		Run: func(c *cobra.Command, args []string) {
 			cmdutil.CheckErr(o.Complete(f, c, args))
 			cmdutil.CheckErr(o.Validate())
@@ -86,6 +86,7 @@ func NewCmdScalePct(f cmdutil.Factory, streams genericclioptions.IOStreams) *cob
 	}
 
 	cmd.Flags().IntVar(&o.Percentage, "pct", o.Percentage, "The new desired number of Percentage. Required.")
+	cmd.MarkFlagRequired("pct")
 	o.configFlags.AddFlags(cmd.Flags())
 
 	return cmd
@@ -93,8 +94,6 @@ func NewCmdScalePct(f cmdutil.Factory, streams genericclioptions.IOStreams) *cob
 
 // Complete sets all information required for updating the current context
 func (o *ScalePctOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
-	o.args = args
-
 	var err error
 
 	printer, err := o.PrintFlags.ToPrinter()
@@ -110,9 +109,12 @@ func (o *ScalePctOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args [
 	}
 
 	o.rawConfig, err = o.configFlags.ToRawKubeConfigLoader().RawConfig()
-	o.namespace, o.enforceNamespace, err = f.ToRawKubeConfigLoader().Namespace()
-	o.clientSet, err = f.KubernetesClientSet()
 	o.args = args
+	o.namespace, o.enforceNamespace, err = f.ToRawKubeConfigLoader().Namespace()
+	if err != nil {
+		return err
+	}
+	o.clientSet, err = f.KubernetesClientSet()
 	if err != nil {
 		return err
 	}
@@ -153,7 +155,6 @@ func (o *ScalePctOptions) Run() error {
 	if err != nil {
 		return err
 	}
-
 	r.Visit(func(info *resource.Info, err error) error {
 		mapping := info.ResourceMapping()
 		resources, _ := o.clientSet.AppsV1().Deployments(info.Namespace).Get(context.TODO(), info.Name, v1.GetOptions{})

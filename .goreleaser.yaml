@@ -1,0 +1,23 @@
+before:
+  hooks:
+  - go mod download
+builds:
+- id: kubectl-pct-scale
+  main: ./cmd/kubectl-pct-scale
+  binary: kubectl-pct-scale
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - linux
+  - darwin
+  goarch:
+  - amd64
+  - arm64
+archives:
+- builds:
+  - kubectl-pct-scale
+  name_template: "{{ .ProjectName }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+  wrap_in_directory: false
+  format: tar.gz
+  files:
+  - LICENSE

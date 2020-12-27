@@ -1,0 +1,19 @@
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+    goreadme:
+      name: Readme
+      runs-on: ubuntu-20.04
+      steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Update readme according to Go doc
+        uses: posener/goreadme@v1
+        with:
+          badge-godoc: 'true'
+          badge-goreportcard: 'true'
+          # Optional: Token allows goreadme to comment the PR with diff preview.
+          github-token: '${{ secrets.GITHUB_TOKEN }}'

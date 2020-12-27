@@ -1,6 +1,7 @@
 /*
 kubectl scale-pct deployment/<deployment-name> --percentage=10
 https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/kubectl/pkg/cmd/scale/scale.go
+https://github.com/kubernetes/kubernetes/blob/5cfce4e5cb4dc6ff429c088ec25973e2ebae2d86/staging/src/k8s.io/kubectl/pkg/cmd/cmd.go#L530
 Need to get the current Percentage number
 */
 
@@ -85,9 +86,24 @@ func NewCmdScalePct(f cmdutil.Factory, streams genericclioptions.IOStreams) *cob
 		ValidArgs: validArgs,
 	}
 
+	cmd.Flags().BoolVar(&o.All, "all", o.All, "Select all resources in the namespace of the specified resource types")
 	cmd.Flags().IntVar(&o.Percentage, "pct", o.Percentage, "The new desired number of Percentage. Required.")
 	cmd.MarkFlagRequired("pct")
 	o.configFlags.AddFlags(cmd.Flags())
+
+	cmd.Flags().MarkHidden("as")                       // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("as-group")                 // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("cache-dir")                // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("certificate-authority")    // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("client-certificate")       // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("client-key")               // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("insecure-skip-tls-verify") // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("namespace")                // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("request-timeout")          // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("server")                   // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("token")                    // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("user")                     // Ignoring error in deepsource.
+	cmd.Flags().MarkHidden("tls-server-name")          // Ignoring error in deepsource.
 
 	return cmd
 }
@@ -145,8 +161,7 @@ func (o *ScalePctOptions) Run() error {
 	r := o.builder.
 		Unstructured().
 		ContinueOnError().
-		NamespaceParam(o.namespace).
-		DefaultNamespace().
+		NamespaceParam(o.namespace).DefaultNamespace().
 		ResourceTypeOrNameArgs(o.All, o.args...).
 		SingleResourceType().
 		Flatten().
